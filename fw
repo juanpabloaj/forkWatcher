@@ -1,0 +1,25 @@
+#!/bin/bash
+if [[ ! -e .git ]]; then
+	#echo ".git dir not found."
+	exit 0
+fi
+#logArg="--graph --pretty=format:%Cgreen%h%Creset``-%C(yellow)%d%Creset``%s``%Cgreen(%cr)``%C(blue)<%an>%Creset --abbrev-commit --date=relative"
+remotes=$(git remote)
+for remote in $remotes
+do
+	if [[ ! -e .git/FETCH_HEAD ]]; then
+		git fetch $remote
+	else
+		fetchDate=$(date --utc --reference=.git/FETCH_HEAD +%s)
+		now=$(date --utc +%s)
+		delta=$(($now - $fetchDate ))
+		# if last update to .git/FETCH_HEAD file 
+		if [[ $delta -gt 3600  ]]; then
+			git fetch $remote
+		fi
+	fi
+	if [[ $(git log HEAD..$remote/master) != "" ]]; then
+		echo $remote 
+		git --no-pager log --graph --pretty=format:"%Cgreen%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(blue)<%an>%Creset" --abbrev-commit --date=relative HEAD..$remote/master
+	fi
+done
