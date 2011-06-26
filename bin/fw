@@ -1,7 +1,7 @@
 #!/bin/bash
 # 10 hours
 fetchUpdate=36000 
-color=1
+color=1 # 1 color 0 monocromo
 while getopts 'm' OPT #{{{
 do 
 	case $OPT in

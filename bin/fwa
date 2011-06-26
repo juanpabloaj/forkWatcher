@@ -1,25 +1,37 @@
 #!/bin/bash
-opts=0
-while getopts 'm' OPT 
+color=1
+if [[ $# == "0" ]]; then
+	echo "Search new commits in remotes repos"
+	echo "Usage:"
+	echo -e "\tfwa -d Dir\t: directory to search git repos"
+	echo -e "\tfwa -m    \t: output without color"
+	exit 0
+fi
+while getopts 'md:' OPT 
 do 
 	case $OPT in
 	m)
-		opts=1
+		color=0
+		;;
+	d)
+		reposDir=$OPTARG
 		;;
 	esac
 done
-src=( $HOME/src $HOME/src/rails )
-for d in ${src[@]} ; do
-	for r in $(ls $d)
+if [[ -d $reposDir ]]; then
+	for r in $(ls $reposDir)
 	do
-		repo=$src/$r
+		repo=$reposDir/$r
 		if [[ -e $repo ]]; then
 			cd $repo
-			if [[ $opts == "0" ]]; then
+			if [[ $color == "1" ]]; then
 				fw
 			else
 				fw -m 
 			fi
 		fi
 	done 
-done
+else 
+	echo "$reposDir not found"
+	exit 0
+fi
