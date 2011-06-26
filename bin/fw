@@ -1,5 +1,16 @@
 #!/bin/bash
-fetchUpdate=3600
+# 10 hours
+fetchUpdate=36000 
+color=1
+while getopts 'm' OPT #{{{
+do 
+	case $OPT in
+	m)
+		color=0
+		;;
+	esac
+done
+#}}}
 if [[ ! -e .git ]]; then
 	#echo ".git dir not found."
 	exit 0
@@ -21,7 +32,11 @@ do
 	fi
 	if [[ $(git log HEAD..$remote/master) != "" ]]; then
 		echo $PWD $remote 
-		git --no-pager log --graph --pretty=format:"%Cgreen%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(blue)<%an>%Creset" --abbrev-commit --date=relative HEAD..$remote/master
+		if [[ $color == "1" ]]; then
+			git --no-pager log --graph --pretty=format:"%Cgreen%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(blue)<%an>%Creset" --abbrev-commit --date=relative HEAD..$remote/master
+		else
+			git --no-pager log --graph --pretty=format:"%h -%d %s (%cr) <%an>" --abbrev-commit --date=relative HEAD..$remote/master
+		fi
 		echo 
 		echo 
 	fi

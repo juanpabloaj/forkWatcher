@@ -1,4 +1,13 @@
 #!/bin/bash
+opts=0
+while getopts 'm' OPT 
+do 
+	case $OPT in
+	m)
+		opts=1
+		;;
+	esac
+done
 src=( $HOME/src $HOME/src/rails )
 for d in ${src[@]} ; do
 	for r in $(ls $d)
@@ -6,7 +15,11 @@ for d in ${src[@]} ; do
 		repo=$src/$r
 		if [[ -e $repo ]]; then
 			cd $repo
-			fw 
+			if [[ $opts == "0" ]]; then
+				fw
+			else
+				fw -m 
+			fi
 		fi
 	done 
 done
