@@ -20,7 +20,9 @@ do
 		fi
 	fi
 	if [[ $(git log HEAD..$remote/master) != "" ]]; then
-		echo $remote 
+		echo $PWD $remote 
 		git --no-pager log --graph --pretty=format:"%Cgreen%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(blue)<%an>%Creset" --abbrev-commit --date=relative HEAD..$remote/master
+		echo 
+		echo 
 	fi
 done

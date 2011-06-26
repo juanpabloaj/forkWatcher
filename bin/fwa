@@ -1,0 +1,12 @@
+#!/bin/bash
+src=( $HOME/src $HOME/src/rails )
+for d in ${src[@]} ; do
+	for r in $(ls $d)
+	do
+		repo=$src/$r
+		if [[ -e $repo ]]; then
+			cd $repo
+			fw 
+		fi
+	done 
+done
