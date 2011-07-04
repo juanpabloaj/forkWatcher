@@ -1,12 +1,16 @@
 #!/bin/bash
-# 10 hours
-fetchUpdate=36000 
+# 1 hours
+fetchUpdate=3600
 color=1 # 1 color 0 monocromo
-while getopts 'm' OPT #{{{
+force=1
+while getopts 'mf' OPT #{{{
 do 
 	case $OPT in
 	m)
 		color=0
+		;;
+	f)
+		force=0
 		;;
 	esac
 done
@@ -20,14 +24,14 @@ remotes=$(git remote)
 for remote in $remotes
 do
 	if [[ ! -e .git/FETCH_HEAD ]]; then
-		git fetch $remote
+		git fetch $remote >& /dev/null
 	else
 		fetchDate=$(date --utc --reference=.git/FETCH_HEAD +%s)
 		now=$(date --utc +%s)
 		delta=$(($now - $fetchDate ))
 		# if last update to .git/FETCH_HEAD file 
-		if [[ $delta -gt $fetchUpdate  ]]; then
-			git fetch $remote
+		if [[ $delta -gt $fetchUpdate  || $force="1" ]]; then
+			git fetch $remote >& /dev/null
 		fi
 	fi
 	if [[ $(git log HEAD..$remote/master) != "" ]]; then
