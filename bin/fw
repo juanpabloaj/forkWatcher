@@ -15,33 +15,38 @@ do
 	esac
 done
 #}}}
-if [[ ! -e .git ]]; then
-	#echo ".git dir not found."
+gitDir=$(git rev-parse --git-dir 2> /dev/null )
+if [[ "$gitDir" == "" && ! -d .hg ]]; then
+	#echo "repo dir not found."
 	exit 0
 fi
-#logArg="--graph --pretty=format:%Cgreen%h%Creset``-%C(yellow)%d%Creset``%s``%Cgreen(%cr)``%C(blue)<%an>%Creset --abbrev-commit --date=relative"
-remotes=$(git remote)
-for remote in $remotes
-do
-	if [[ ! -e .git/FETCH_HEAD ]]; then
-		git fetch $remote >& /dev/null
-	else
-		fetchDate=$(date --utc --reference=.git/FETCH_HEAD +%s)
-		now=$(date --utc +%s)
-		delta=$(($now - $fetchDate ))
-		# if last update to .git/FETCH_HEAD file 
-		if [[ $delta -gt $fetchUpdate  || $force="1" ]]; then
+if [[ "$gitDir" != "" ]]; then
+	remotes=$(git remote)
+	for remote in $remotes
+	do
+		if [[ ! -e .git/FETCH_HEAD ]]; then
 			git fetch $remote >& /dev/null
-		fi
-	fi
-	if [[ $(git log HEAD..$remote/master) != "" ]]; then
-		echo $PWD $remote 
-		if [[ $color == "1" ]]; then
-			git --no-pager log --graph --pretty=format:"%Cgreen%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(blue)<%an>%Creset" --abbrev-commit --date=relative HEAD..$remote/master
 		else
-			git --no-pager log --graph --pretty=format:"%h -%d %s (%cr) <%an>" --abbrev-commit --date=relative HEAD..$remote/master
+			fetchDate=$(date --utc --reference=.git/FETCH_HEAD +%s)
+			now=$(date --utc +%s)
+			delta=$(($now - $fetchDate ))
+			# if last update to .git/FETCH_HEAD file 
+			if [[ $delta -gt $fetchUpdate  || $force="1" ]]; then
+				git fetch $remote >& /dev/null
+			fi
 		fi
-		echo 
-		echo 
-	fi
-done
+		if [[ $(git log HEAD..$remote/master) != "" ]]; then
+			echo $PWD $remote 
+			if [[ $color == "1" ]]; then
+				git --no-pager log --graph --pretty=format:"%Cgreen%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(blue)<%an>%Creset" --abbrev-commit --date=relative HEAD..$remote/master
+			else
+				git --no-pager log --graph --pretty=format:"%h -%d %s (%cr) <%an>" --abbrev-commit --date=relative HEAD..$remote/master
+			fi
+			echo 
+			echo 
+		fi
+	done
+fi
+if [[ -d .hg ]]; then
+	echo "hg repo"
+fi
