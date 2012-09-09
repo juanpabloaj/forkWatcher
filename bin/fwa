@@ -7,8 +7,8 @@ if [[ $# == "0" ]]; then
 	echo -e "\tfwa -m    \t: output without color"
 	exit 0
 fi
-while getopts 'md:' OPT 
-do 
+while getopts 'md:' OPT
+do
 	case $OPT in
 	m)
 		color=0
@@ -19,7 +19,7 @@ do
 	esac
 done
 if [[ -d $reposDir ]]; then
-	for r in $(ls $reposDir)
+	for r in $(ls -t $reposDir)
 	do
 		repo=$reposDir/$r
 		if [[ -e $repo ]]; then
@@ -27,11 +27,11 @@ if [[ -d $reposDir ]]; then
 			if [[ $color == "1" ]]; then
 				fw
 			else
-				fw -m 
+				fw -m
 			fi
 		fi
-	done 
-else 
+	done
+else
 	echo "$reposDir not found"
 	exit 0
 fi
