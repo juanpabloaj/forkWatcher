@@ -4,7 +4,7 @@ fetchUpdate=3600
 color=1 # 1 color 0 monocromo
 force=1
 while getopts 'mf' OPT #{{{
-do 
+do
 	case $OPT in
 	m)
 		color=0
@@ -29,19 +29,19 @@ do
 		fetchDate=$(date --utc --reference=.git/FETCH_HEAD +%s)
 		now=$(date --utc +%s)
 		delta=$(($now - $fetchDate ))
-		# if last update to .git/FETCH_HEAD file 
+		# if last update to .git/FETCH_HEAD file
 		if [[ $delta -gt $fetchUpdate  || $force="1" ]]; then
 			git fetch $remote >& /dev/null
 		fi
 	fi
 	if [[ $(git log HEAD..$remote/master) != "" ]]; then
-		echo $PWD $remote 
+		echo $PWD $remote
 		if [[ $color == "1" ]]; then
 			git --no-pager log --graph --pretty=format:"%Cgreen%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(blue)<%an>%Creset" --abbrev-commit --date=relative HEAD..$remote/master
 		else
 			git --no-pager log --graph --pretty=format:"%h -%d %s (%cr) <%an>" --abbrev-commit --date=relative HEAD..$remote/master
 		fi
-		echo 
-		echo 
+		echo
+		echo
 	fi
 done
